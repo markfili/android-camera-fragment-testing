@@ -28,8 +28,9 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback, 
 
     private Camera camera;
     private CameraPreview cameraPreview;
-    private View cameraView;
     private View viewOnTop;
+    private FrameLayout preview;
+
 
     private int cameraId;
 
@@ -48,6 +49,8 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback, 
 
         View view = inflater.inflate(R.layout.fragment_camera, container, false);
         viewOnTop = inflater.inflate(R.layout.fragment_picture, container, false);
+
+        preview = (FrameLayout) view.findViewById(R.id.camera_preview);
 
         autoFocusCallback = this;
         previewCallback = this;
@@ -82,13 +85,11 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback, 
         boolean cameraOpen;
         releaseCameraAndPreview();
         camera = getCameraInstance();
-        cameraView = view;
         cameraOpen = (camera != null);
 
         if (cameraOpen) {
             // TODO add shutterCallback to constructor parameters
-            cameraPreview = new CameraPreview(getActivity(), cameraId, camera, cameraView, autoFocusCallback, previewCallback);
-            FrameLayout preview = (FrameLayout) view.findViewById(R.id.camera_preview);
+            cameraPreview = new CameraPreview(getActivity(), cameraId, camera, view, autoFocusCallback, previewCallback);
             preview.addView(cameraPreview);
             cameraPreview.startCameraPreview();
             // inflate subfragment's layout over camera layout
@@ -117,6 +118,7 @@ public class CameraFragment extends Fragment implements Camera.PictureCallback, 
         if (cameraPreview != null) {
             cameraPreview.destroyDrawingCache();
             cameraPreview.camera = null;
+            preview.removeAllViews();
         }
     }
 
